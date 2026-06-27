@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
-
+import InventoryButtons from "./InventoryButtons";
 function ProductTable() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
 
   // Fetch products from backend
   const fetchProducts = async () => {
-    try {
-      const res = await api.get("/products");
-      setProducts(res.data);
-    } catch (err) {
-      setError("Failed to load products");
-    }
-  };
+  try {
+    const res = await api.get("/products");
+    setProducts(res.data);
+  } catch (err) {
+    setError("Failed to load products");
+  }
+};
 
   useEffect(() => {
     fetchProducts();
@@ -39,31 +39,36 @@ function ProductTable() {
 
             <thead>
               <tr className="bg-gray-100 text-left text-sm text-gray-700">
+                
                 <th className="p-3">SKU</th>
                 <th className="p-3">Name</th>
                 <th className="p-3">Price</th>
                 <th className="p-3">Quantity</th>
                 <th className="p-3">Last Updated</th>
+                <th className="p-3">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {products.map((product) => (
-                <tr
-                  key={product.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
-                  <td className="p-3 font-medium">{product.sku}</td>
-                  <td className="p-3">{product.name}</td>
-                  <td className="p-3">${product.price}</td>
-                  <td className="p-3">{product.quantity}</td>
-                  <td className="p-3 text-sm text-gray-500">
-                    {product.last_updated}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {products.map((product) => (
+    <tr key={product.id} className="border-b hover:bg-gray-50">
+      <td className="p-3">{product.sku}</td>
+      <td className="p-3">{product.name}</td>
+      <td className="p-3">${product.price}</td>
+      <td className="p-3 font-bold">{product.quantity}</td>
+      <td className="p-3 text-sm text-gray-500">
+        {product.last_updated}
+      </td>
 
+      <td className="p-3">
+        <InventoryButtons
+          productId={product.id}
+          refreshProducts={fetchProducts}
+        />
+      </td>
+    </tr>
+  ))}
+</tbody>
           </table>
         </div>
       )}
